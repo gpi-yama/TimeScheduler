@@ -16,23 +16,23 @@ class Timer(Tk.Frame):
         Tk.Frame.__init__(self, master)
         self.master.title('Time scheduler')
 
-        self.tokei = Tk.Label(self, text=u'00:00', font='Arial, 25')
+        self.tokei = Tk.Label(self, text=u'00:00', font='Arial, 25', bg="#daebe8")
         self.text = Tk.Label(self, text=u'内容', font='Arial, 12')
 
-        b1 = Tk.Button(self, text='Start', command=self.start)
-        b2 = Tk.Button(self, text='Reset', command=self.stop)
+        b1 = Tk.Button(self, text='Start', command=self.start, bg="#96ceb4", fg="white")
+        b2 = Tk.Button(self, text='Reset', command=self.stop, bg="#ffeead")
 
-        b1.grid(row=0, column=0, columnspan=4,
+        b1.grid(row=0, column=0, columnspan=5,
                 padx=5, pady=2, sticky=Tk.W+Tk.E)
-        b2.grid(row=0, column=4, columnspan=4,
+        b2.grid(row=0, column=5, columnspan=5,
                 padx=5, pady=2, sticky=Tk.W + Tk.E)
 
-        self.tokei.grid(row=1, column=2, columnspan=4,
+        self.tokei.grid(row=1, column=4, columnspan=4,
                         padx=5, pady=2, sticky=Tk.W + Tk.E)
-        self.text.grid(row=1, column=0, columnspan=2,
+        self.text.grid(row=1, column=0, columnspan=4,
                        padx=5, pady=2, sticky=Tk.W + Tk.E)
 
-        add_b = Tk.Button(self, text='Add schedule', command=self.add_schedule)
+        add_b = Tk.Button(self, text='Add schedule', command=self.add_schedule, bg="#ff6f69")
         add_b.grid(row=2, column=0, columnspan=4,
                    padx=5, pady=2, sticky=Tk.W + Tk.E)
 
@@ -44,8 +44,8 @@ class Timer(Tk.Frame):
         self.ids += 1
         self.times[self.ids] = {}
         #frame = Tk.LabelFrame(self, text=u"内容", width=20)
-        self.times[self.ids]["label"] = Tk.Label(self, text=u"内容:")
-        self.times[self.ids]["text"] = Tk.Entry(self, width=WID)
+        self.times[self.ids]["label"] = Tk.Label(self, text=u"Content:")
+        self.times[self.ids]["text"] = Tk.Entry(self, width=WID*2)
         self.times[self.ids]["starth"] = Tk.Label(
             self, text=u'時', font='Arial, 12')
         self.times[self.ids]["startm"] = Tk.Label(
@@ -74,51 +74,52 @@ class Timer(Tk.Frame):
         )
 
         self.times[self.ids]["starth"].grid(
-            row=self.row, column=3, padx=5, pady=2, sticky=Tk.W)
+            row=self.row, column=4, padx=5, pady=2, sticky=Tk.W)
         self.times[self.ids]["sh"].grid(
-            row=self.row, column=2, padx=5, pady=2)
+            row=self.row, column=3, padx=5, pady=2)
 
         self.times[self.ids]["startm"].grid(
-            row=self.row, column=5, padx=5, pady=2, sticky=Tk.W)
+            row=self.row, column=6, padx=5, pady=2, sticky=Tk.W)
         self.times[self.ids]["sm"].grid(
-            row=self.row, column=4, padx=5, pady=2)
+            row=self.row, column=5, padx=5, pady=2)
 
         self.times[self.ids]["fromto"].grid(
-            row=self.row, column=6, padx=5, pady=2, sticky=Tk.W)
+            row=self.row, column=7, padx=5, pady=2, sticky=Tk.W)
 
         self.times[self.ids]["endh"].grid(
-            row=self.row, column=8, padx=5, pady=2, sticky=Tk.W)
+            row=self.row, column=9, padx=5, pady=2, sticky=Tk.W)
         self.times[self.ids]["eh"].grid(
-            row=self.row, column=7, padx=5, pady=2)
+            row=self.row, column=8, padx=5, pady=2)
 
         self.times[self.ids]["endm"].grid(
-            row=self.row, column=10, padx=5, pady=2, sticky=Tk.W)
+            row=self.row, column=11, padx=5, pady=2, sticky=Tk.W)
         self.times[self.ids]["em"].grid(
-            row=self.row, column=9, padx=5, pady=2)
+            row=self.row, column=10, padx=5, pady=2)
 
     def start(self):  # Startを押したときの動作
         self.started = True
         self.set_time()
         self.count()
-        self.after(1000, self.start)
-        print(self.end_time)
+        self.after(5000, self.start)
 
     def count(self):
         if self.started and self.end_time is not None:
-            print("count fin")
             now = datetime.datetime.now()
             h = int(self.end_time.hour) - int(now.hour)
             m = int(self.end_time.minute) - int(now.minute)
-            t = h * 3600 + m * 60 + (60 - now.second)
+            t = h * 3600 + m * 60 - now.second
             # winsound.PlaySound("SystemAsterisk",winsound.SND_ALIAS) #時間になったらwindowsのみ音で知らせる
             if self.end_time < now:
                 self.tokei.config(text="Finish!")
-                os.system("afplay /System/Library/Sounds/Ping.aiff -v 10")
-                self.after(1000, self.start)
+                #os.system("afplay /System/Library/Sounds/Ping.aiff -v 10")
+                # os.system('''
+                #     powershell -Command "Add-Type -AssemblyName System.Windows.Forms; $toast = New-Object System.Windows.Forms.NotifyIcon; $toast.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon('C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'); $toast.BalloonTipTitle = 'Finish_mytask!'; $toast.BalloonTipText = 'Process END'; $toast.Visible = $True; $toast.ShowBalloonTip(1000)"
+                #     ''')
             else:
-                print("count", t)
                 self.tokei.config(text='%02d:%02d' %
                                   (t / 60, t % 60))  # 表示時間を1秒毎に書き換え
+                if t / 60 < 1:
+                    self.tokei.config(bg="HEX: #ffcc5c")
                 self.after(1000, self.count)
 
     def stop(self):  # 停止処理
@@ -135,14 +136,12 @@ class Timer(Tk.Frame):
         return sh, sm, eh, em, txt
 
     def set_time(self):
-        print("set time")
         self.interval = 0
         now = datetime.datetime.now()
         et = None
 
         for i in range(self.minid, self.ids + 1):
             sh, sm, eh, em, txt = self.get_time(i)
-            print(sh, sm, eh, em, txt)
             start_time = datetime.datetime(year=now.year, month=now.month,
                                            day=now.day,
                                            hour=int(sh), minute=int(sm),
@@ -151,11 +150,11 @@ class Timer(Tk.Frame):
                                          day=now.day,
                                          hour=int(eh), minute=int(em),
                                          second=0, microsecond=0)
-            print("OKOK", end_time, start_time, now)
             if start_time <= now and end_time >= now:
                 h = int(eh) - int(sh)
                 m = int(em) - int(sm)
                 self.now_id = i
+                self.minid = i
                 self.end_time = end_time
                 self.text.config(text=u"内容:"+txt)
                 break
@@ -164,6 +163,7 @@ class Timer(Tk.Frame):
                     h = int(sh) - int(et.hour)
                     m = int(sm) - int(et.minute)
                     self.now_id = i
+                    self.minid = i
                     self.interval = h * 3600 + m * 60
                     self.end_time = start_time
                     self.text.config(text=u"内容:休憩 after"+txt)
@@ -172,6 +172,7 @@ class Timer(Tk.Frame):
                 self.now_id = i
                 self.end_time = start_time
                 self.text.config(text=u"内容:休憩, after" + txt)
+                self.minid = i
                 break
 
             et = end_time
