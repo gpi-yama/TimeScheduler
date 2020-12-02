@@ -1,3 +1,4 @@
+# coding: utf-8
 import tkinter as Tk
 import time
 # import winsound
@@ -100,7 +101,7 @@ class Timer(Tk.Frame):
         self.started = True
         self.set_time()
         self.count()
-        self.after(5000, self.start)
+        self.after(2000, self.start)
 
     def count(self):
         if self.started and self.end_time is not None:
@@ -111,15 +112,15 @@ class Timer(Tk.Frame):
             # winsound.PlaySound("SystemAsterisk",winsound.SND_ALIAS) #時間になったらwindowsのみ音で知らせる
             if self.end_time < now:
                 self.tokei.config(text="Finish!")
-                #os.system("afplay /System/Library/Sounds/Ping.aiff -v 10")
+                os.system("afplay /System/Library/Sounds/Ping.aiff -v 5")
                 # os.system('''
                 #     powershell -Command "Add-Type -AssemblyName System.Windows.Forms; $toast = New-Object System.Windows.Forms.NotifyIcon; $toast.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon('C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'); $toast.BalloonTipTitle = 'Finish_mytask!'; $toast.BalloonTipText = 'Process END'; $toast.Visible = $True; $toast.ShowBalloonTip(1000)"
                 #     ''')
+                self.start()
             else:
                 self.tokei.config(text='%02d:%02d' %
                                   (t / 60, t % 60))  # 表示時間を1秒毎に書き換え
-                if t / 60 < 1:
-                    self.tokei.config(bg="HEX: #ffcc5c")
+                    # self.tokei.config(bg="HEX: #ffcc5c")
                 self.after(1000, self.count)
 
     def stop(self):  # 停止処理
@@ -150,6 +151,8 @@ class Timer(Tk.Frame):
                                          day=now.day,
                                          hour=int(eh), minute=int(em),
                                          second=0, microsecond=0)
+            if txt is "":
+                self.stop()
             if start_time <= now and end_time >= now:
                 h = int(eh) - int(sh)
                 m = int(em) - int(sm)
